@@ -20,9 +20,7 @@ processes = {
 }
 
 
-server_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-
-server_socket.bind((SERVER_IP, SERVER_PORT))
+server_socket: socket.socket
 
 
 def send_message(process_id, message):
@@ -93,6 +91,10 @@ def server_controller():
 
 
 def main():
+    global server_socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_socket.bind((SERVER_IP, SERVER_PORT))
+
     print(f"[SERVER] UDP socket running on: "
           f"{SERVER_IP}:{SERVER_PORT}")
 

@@ -9,10 +9,10 @@ CONTROL_IP = "127.0.0.1"
 CONTROL_PORT = 9000
 
 LOG_FILES = {
-    "SERVER": "server.log",
-    "P1": "process1.log",
-    "P2": "process2.log",
-    "P3": "process3.log",
+    "SERVER": "logs/server.log",
+    "P1": "logs/process1.log",
+    "P2": "logs/process2.log",
+    "P3": "logs/process3.log",
 }
 
 def send_command(command: str):

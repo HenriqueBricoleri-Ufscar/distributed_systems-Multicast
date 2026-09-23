@@ -11,10 +11,14 @@ NUM_PROCESS = 3
 
 
 def prepare_log(filename):
+    directory = os.path.dirname(filename)
+    os.makedirs(directory, exist_ok=True)
+
     with open(filename, "w", encoding="utf-8") as log_file:
         if os.geteuid() == 0:
             uid = int(os.environ.get("SUDO_UID", os.getuid()))
             gid = int(os.environ.get("SUDO_GID", os.getgid()))
+            os.chown(directory, uid, gid)
             os.fchown(log_file.fileno(), uid, gid)
 
         os.fchmod(log_file.fileno(), 0o644)
@@ -52,8 +56,8 @@ def build_network():
     net.pingAll()
 
     info("*** Starting server.py\n")
-    prepare_log("server.log")
-    server.cmd("python3 -u server.py > server.log 2>&1 &")
+    prepare_log("logs/server.log")
+    server.cmd("python3 -u server.py > logs/server.log 2>&1 &")
 
     info("*** Starting processes\n")
 
@@ -63,7 +67,7 @@ def build_network():
 
         info(f"*** Starting p{process_id} in {ip}\n")
 
-        log_file = f"process{process_id}.log"
+        log_file = f"logs/process{process_id}.log"
         prepare_log(log_file)
         host.cmd(f"python3 -u process.py {process_id} {ip} > {log_file} 2>&1 &")
 
@@ -86,12 +90,12 @@ def build_network():
 
     info("\n*** Network ready!!\n")
     info("*** Commands:\n")
-    info("*** h1 cat server.log\n")
+    info("*** h1 cat logs/server.log\n")
 
     for i in range(NUM_PROCESS):
         process_id = i + 1
         host_number = i + 2
-        info(f"*** h{host_number} cat process{process_id}.log\n")
+        info(f"*** h{host_number} cat logs/process{process_id}.log\n")
 
     info("\n")
     CLI(net)
