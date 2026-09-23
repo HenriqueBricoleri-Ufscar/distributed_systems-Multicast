@@ -1,5 +1,9 @@
 import socket
 import threading
+import json
+from dataclasses import asdict
+
+from Message import DataMessage, AckMessage, Packet
 
 
 SERVER_IP = "10.0.0.1"
@@ -26,9 +30,18 @@ def send_message(process_id, message):
 
     if dest_proc is None:
         raise KeyError(f"process '{process_id}' not found!")
+    
+    packet = DataMessage(
+        msg_id="server-test-1",
+        timestamp=0,
+        sender="server",
+        content=message
+    )
+    
+    data = asdict(packet)
+    data["type"] = "DATA"
 
-    server_socket.sendto(message.encode("utf-8"), dest_proc)
-
+    server_socket.sendto(json.dumps(data).encode("utf-8"), dest_proc)
     print(f"[SEND] {dest_proc} - {message}")
 
 
