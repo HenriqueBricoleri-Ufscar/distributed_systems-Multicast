@@ -1,7 +1,7 @@
 import socket, sys, json
 from dataclasses import asdict
 
-from Message import DataMessage, AckMessage, Packet
+from Message import DataMessage, AckMessage, RequestMessage, ReplyMessage, TriggerMessage, Packet
 from fifo import FifoChannel
 
 PORT = 5000
@@ -21,6 +21,16 @@ def serialize_packet(packet: Packet) -> bytes:
     elif isinstance(packet, AckMessage):
         data["type"] = "ACK"
 
+    # mensagens para o algoritmo de ricart e agrawala
+    elif isinstance(packet, RequestMessage):
+        data["type"] = "REQUEST"
+
+    elif isinstance(packet, ReplyMessage):
+        data["type"] = "REPLY"
+
+    elif isinstance(packet, TriggerMessage):
+        data["type"] = "TRIGGER"
+
     else:
         raise TypeError(f"Unsupported packet type: {type(packet)}")
 
@@ -36,7 +46,17 @@ def deserialize_packet(data: bytes) -> Packet:
 
     if packet_type == "ACK":
         return AckMessage(**packet_data)
-    
+
+    # mensagens para o algoritmo de ricart e agrawala
+    if packet_type == "REQUEST": 
+        return RequestMessage(**packet_data)
+
+    if packet_type == "REPLY":
+        return ReplyMessage(**packet_data)
+
+    if packet_type == "TRIGGER":
+        return TriggerMessage(**packet_data)
+
     raise ValueError(f"Unknown packet type: {packet_type}")
 
 class Process:

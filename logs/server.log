@@ -1,2 +1,11 @@
 [SERVER] UDP socket running on: 10.0.0.1:5000
 [CONTROLLER] listening on: 127.0.0.1:9000
+Commands: request <processo> | release <processo>
+[CONTROLLER] command received: request p1
+[SEND] ('10.0.0.2', 5000) - REQUEST
+[CONTROLLER] command received: request p2
+[SEND] ('10.0.0.3', 5000) - REQUEST
+[CONTROLLER] command received: release p1
+[SEND] ('10.0.0.2', 5000) - RELEASE
+[CONTROLLER] command received: release p2
+[SEND] ('10.0.0.3', 5000) - RELEASE

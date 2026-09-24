@@ -1,1 +1,5 @@
 [p3] running on 10.0.0.4:5000 clock=10
+[p3] RECEIVE REQUEST clock=11 state=RELEASED from=p1 timestamp=2
+[p3] SEND REPLY clock=12 state=RELEASED to=p1 timestamp=12
+[p3] RECEIVE REQUEST clock=13 state=RELEASED from=p2 timestamp=9
+[p3] SEND REPLY clock=14 state=RELEASED to=p2 timestamp=14
