@@ -1,1 +1,11 @@
 [p2] running on 10.0.0.3:5000 clock=5
+[p2] RECEIVE REQUEST clock=6 state=RELEASED from=p1 timestamp=2
+[p2] SEND REPLY clock=7 state=RELEASED to=p1 timestamp=7
+[p2] REQUEST CS clock=9 state=WANTED timestamp=9
+[p2] SEND REQUEST clock=9 state=WANTED to=p1 timestamp=9
+[p2] SEND REQUEST clock=9 state=WANTED to=p3 timestamp=9
+[p2] RECEIVE REPLY clock=15 state=WANTED from=p3
+[p2] RECEIVE REPLY clock=17 state=WANTED from=p1
+[p2] ENTER CS clock=17 state=HELD
+[p2] HOLDING CS clock=17 state=HELD (aguardando comando 'release')
+[p2] EXIT CS clock=18 state=RELEASED

@@ -24,7 +24,9 @@ def prepare_log(filename):
         os.fchmod(log_file.fileno(), 0o644)
 
 
-def build_network():
+def build_network(server_script="server.py", process_script="process.py"):
+    # server_script/process_script permitem apontar para outra implementação
+    # (ex.: exclusion/server.py, exclusion/process.py) sem duplicar a topologia.
     net = Mininet(controller=Controller, link=TCLink)
 
     info("*** Add controller\n")
@@ -55,9 +57,9 @@ def build_network():
     info("*** Testing the connection\n")
     net.pingAll()
 
-    info("*** Starting server.py\n")
+    info(f"*** Starting {server_script}\n") # mensagem de log para indicar que o servidor está sendo iniciado
     prepare_log("logs/server.log")
-    server.cmd("python3 -u server.py > logs/server.log 2>&1 &")
+    server.cmd(f"python3 -u {server_script} > logs/server.log 2>&1 &") # inicia o servidor em segundo plano e redireciona a saída para o arquivo de log
 
     info("*** Starting processes\n")
 
@@ -69,19 +71,19 @@ def build_network():
 
         log_file = f"logs/process{process_id}.log"
         prepare_log(log_file)
-        host.cmd(f"python3 -u process.py {process_id} {ip} > {log_file} 2>&1 &")
+        host.cmd(f"python3 -u {process_script} {process_id} {ip} > {log_file} 2>&1 &") # inicia o processo em segundo plano e redireciona a saída para o arquivo de log
 
     info("*** Checking processes\n")
-    server_pid = server.cmd("pgrep -f 'python3 -u server.py'").strip()
+    server_pid = server.cmd(f"pgrep -f 'python3 -u {server_script}'").strip() # verifica se o servidor está em execução e obtém o PID do processo do servidor
 
     if server_pid:
         info(f"*** Server running (PID {server_pid})\n")
     else:
-        info("*** ERROR: server.py is not running\n")
+        info(f"*** ERROR: {server_script} is not running\n")
 
     for i, host in enumerate(processes):
         process_id = i + 1
-        process_pid = host.cmd(f"pgrep -f 'python3 -u process.py {process_id}'").strip()
+        process_pid = host.cmd(f"pgrep -f 'python3 -u {process_script} {process_id}'").strip()
 
         if process_pid:
             info(f"*** p{process_id} running (PID {process_pid})\n")
@@ -101,10 +103,10 @@ def build_network():
     CLI(net)
 
     info("*** Finishing processes\n")
-    server.cmd("pkill -f server.py")
+    server.cmd(f"pkill -f {server_script}")
 
     for host in processes:
-        host.cmd("pkill -f process.py")
+        host.cmd(f"pkill -f {process_script}")
 
     net.stop()
 
